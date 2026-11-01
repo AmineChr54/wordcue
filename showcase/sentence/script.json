@@ -1,0 +1,70 @@
+{
+  "voice": {
+    "engine": "supertonic3",
+    "voice": "F2",
+    "lang": "en",
+    "speed": 1.0,
+    "takes": 3
+  },
+  "gap": 0.3,
+  "lines": [
+    {
+      "id": "a1",
+      "text": "Someone typed this sentence.",
+      "gap": 0.45
+    },
+    {
+      "id": "a2",
+      "text": "A voice on your own computer reads it, more than once."
+    },
+    {
+      "id": "a3",
+      "text": "Speech recognition checks every take, and the closest match to the script wins.",
+      "gap": 0.4
+    },
+    {
+      "id": "a4",
+      "text": "If no take comes close enough, the build stops.",
+      "gap": 0.5
+    },
+    {
+      "id": "a5",
+      "text": "Now every word has a time stamp."
+    },
+    {
+      "id": "a6",
+      "text": "So a title can land exactly on its word, right now.",
+      "gap": 0.7
+    },
+    {
+      "id": "a7",
+      "text": "Change one sentence, and only that sentence is spoken again."
+    },
+    {
+      "id": "a8",
+      "text": "Everything after it moves by itself.",
+      "gap": 0.4
+    },
+    {
+      "id": "a9",
+      "text": "Frame by frame, one page becomes a video, or an interactive player.",
+      "gap": 0.4
+    },
+    {
+      "id": "a10",
+      "text": "And every project gets a new look.",
+      "gap": 1.3
+    },
+    {
+      "id": "a11",
+      "text": "This voice is AI, and it just told you so.",
+      "gap": 0.3
+    },
+    {
+      "id": "a12",
+      "text": "This is Wordcue.",
+      "say": "This is Word Cue.",
+      "gap": 1.6
+    }
+  ]
+}

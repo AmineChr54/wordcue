@@ -1,0 +1,38 @@
+{
+  "voice": {
+    "engine": "supertonic3",
+    "voice": "M1",
+    "lang": "de",
+    "speed": 1.0,
+    "takes": 3
+  },
+  "gap": 0.35,
+  "lines": [
+    {
+      "id": "c1",
+      "text": "Im Sommer wird diese Stahlbrücke länger."
+    },
+    {
+      "id": "c2",
+      "text": "Stahl dehnt sich bei Hitze aus."
+    },
+    {
+      "id": "c3",
+      "text": "Hundert Meter wachsen bei dreißig Grad mehr um rund dreieinhalb Zentimeter.",
+      "gap": 1.1
+    },
+    {
+      "id": "c4",
+      "text": "Ohne Lücke würde sich die Brücke verformen."
+    },
+    {
+      "id": "c5",
+      "text": "Deshalb hat sie eine Dehnungsfuge."
+    },
+    {
+      "id": "c6",
+      "text": "Das Klack-Klack beim Drüberfahren ist genau diese Lücke.",
+      "gap": 2.0
+    }
+  ]
+}

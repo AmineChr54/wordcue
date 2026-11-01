@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordcue voices</title>
+<style>
+  :root { --bg:#ffffff; --ink:#17181a; --mute:#5f636b; --rule:#d9dbdf; --tint:#f1f2f4; --mark:#0b6bcb; --star:#a35400; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#17181a; --ink:#eceef1; --mute:#a3a7ae; --rule:#34363b; --tint:#222427; --mark:#6db3f5; --star:#f0a94b; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,"Segoe UI",sans-serif; }
+  main { max-width:940px; margin:0 auto; padding:40px 16px 80px; }
+  h1 { font-size:28px; margin:0 0 6px; }
+  h2 { font-size:22px; margin:40px 0 2px; }
+  h3 { font-size:15px; margin:24px 0 6px; color:var(--mute); font-weight:600; }
+  p { margin:0 0 10px; color:var(--mute); max-width:70ch; }
+  .row { display:grid; grid-template-columns:minmax(150px,1fr) auto minmax(180px,1.3fr) 76px; gap:8px 16px; align-items:center; padding:14px 0 8px; border-top:1px solid var(--rule); }
+  .row b { font-size:17px; }
+  .tag { font-size:12px; border:1px solid var(--mark); color:var(--mark); padding:0 6px; margin-left:6px; white-space:nowrap; }
+  small { display:block; color:var(--mute); font-size:13px; line-height:1.4; }
+  .stars { color:var(--star); letter-spacing:1px; }
+  button { font:inherit; color:inherit; background:none; border:1px solid var(--rule); padding:7px 12px; cursor:pointer; min-height:38px; white-space:nowrap; }
+  button:hover { background:var(--tint); }
+  button:focus-visible { outline:2px solid var(--mark); outline-offset:2px; }
+  button.on { background:var(--ink); color:var(--bg); border-color:var(--ink); }
+  .plays { display:flex; gap:8px; flex-wrap:wrap; }
+  .bar { grid-column:1 / -1; height:3px; background:var(--tint); }
+  .bar i { display:block; height:100%; width:0; background:var(--mark); }
+  details { margin-top:8px; color:var(--mute); font-size:14px; }
+  summary { cursor:pointer; }
+  details p { margin:8px 0; font-size:14px; }
+  @media (max-width:700px) { .row { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Voices</h1>
+  <p><b>All samples are AI-generated.</b> Each voice runs locally on a laptop CPU. Press <b>Copy</b> on a voice to get a sentence for your request. Stars are the author's own ratings, given on an earlier sample text. Check each licence before client or monetised use.</p>
+  <div id="lists"></div>
+</main>
+<script src="voices.js"></script>
+<script>
+const LANGS = { de: 'German', en: 'English' };
+const ALL = window.VOICES.voices;
+const audio = new Audio();
+let playing = null;
+
+const safe = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const stars = n => n ? '★'.repeat(n) + '☆'.repeat(5 - n) : '';
+function speedText(s) {
+  if (s == null) return '';
+  return s <= 1 ? `${(1 / s).toFixed(1)}x faster than real time` : `${s.toFixed(1)}x slower than real time`;
+}
+const sayThis = v => `Use the voice ${v.name} in ${LANGS[v.lang]} (${v.engineName}).`;
+
+function row(v) {
+  const i = ALL.indexOf(v);
+  const rating = [
+    v.starsShort ? `<span class="stars">${stars(v.starsShort)}</span> hard words` : '',
+    v.starsLong ? `<span class="stars">${stars(v.starsLong)}</span> narration` : '',
+  ].filter(Boolean).join('<br>');
+  return `<div class="row">
+    <div><b>${safe(v.name)}</b>${v.default ? '<span class="tag">Default</span>' : ''}<small>${safe(v.engineName)}</small></div>
+    <div class="plays">
+      <button data-play="${i}" data-kind="short" aria-label="Play ${safe(v.name)}, hard words">▶ Hard words</button>
+      ${v.long ? `<button data-play="${i}" data-kind="long" aria-label="Play ${safe(v.name)}, narration">▶ Narration</button>` : ''}
+    </div>
+    <small>${rating ? rating + '<br>' : ''}${speedText(v.slowerThanRealtime)}<br>${safe(v.licence)}</small>
+    <div>${v.connected ? `<button data-copy="${i}">Copy</button>` : ''}</div>
+    <div class="bar"><i id="bar-${i}"></i></div>
+  </div>`;
+}
+document.getElementById('lists').innerHTML = Object.entries(LANGS).map(([lang, label]) => {
+  const t = window.VOICES.text;
+  const ready = ALL.filter(v => v.lang === lang && v.connected);
+  const more = ALL.filter(v => v.lang === lang && !v.connected);
+  return `<h2>${label}</h2>
+    <details><summary>What they read</summary><p><b>Hard words:</b> ${safe(t[lang + ':r1'])}</p><p><b>Narration:</b> ${safe(t[lang + ':r2'])}</p></details>
+    <h3>Ready to use in films</h3>${ready.map(row).join('')}
+    ${more.length ? `<h3>Tested, not connected to films yet</h3>${more.map(row).join('')}` : ''}`;
+}).join('');
+
+function repaint() {
+  document.querySelectorAll('[data-play]').forEach(b => {
+    const kind = b.dataset.kind;
+    const on = playing && playing.index === +b.dataset.play && playing.kind === kind && !audio.paused;
+    b.classList.toggle('on', on);
+    b.textContent = `${on ? '❚❚' : '▶'} ${kind === 'short' ? 'Hard words' : 'Narration'}`;
+  });
+}
+function toggle(index, kind) {
+  if (playing && playing.index === index && playing.kind === kind) {
+    audio.paused ? audio.play() : audio.pause();
+  } else {
+    if (playing) document.getElementById(`bar-${playing.index}`).style.width = 0;
+    playing = { index, kind };
+    audio.src = ALL[index][kind];
+    audio.play();
+  }
+  repaint();
+}
+async function copy(text, button) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const area = document.body.appendChild(document.createElement('textarea'));
+    area.value = text; area.select(); document.execCommand('copy'); area.remove();
+  }
+  button.textContent = 'Copied';
+  setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+}
+document.addEventListener('click', e => {
+  const b = e.target.closest('button');
+  if (!b) return;
+  if (b.dataset.play !== undefined) toggle(+b.dataset.play, b.dataset.kind);
+  if (b.dataset.copy !== undefined) copy(sayThis(ALL[+b.dataset.copy]), b);
+});
+audio.addEventListener('timeupdate', () => {
+  if (!playing || !audio.duration) return;
+  document.getElementById(`bar-${playing.index}`).style.width = `${audio.currentTime / audio.duration * 100}%`;
+});
+['ended', 'pause', 'play'].forEach(ev => audio.addEventListener(ev, repaint));
+</script>
+</body>
+</html>

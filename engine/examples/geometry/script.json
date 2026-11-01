@@ -1,0 +1,9 @@
+{
+  "voice": { "engine": "supertonic3", "voice": "F2", "lang": "de", "speed": 1.0, "takes": 2 },
+  "gap": 0.35,
+  "lines": [
+    { "id": "eins", "text": "Ein Eintrag beginnt links im Formular." },
+    { "id": "zwei", "text": "Dann wandert er direkt in die Liste." },
+    { "id": "drei", "text": "Am Ende schwenkt die Kamera auf das Ergebnis." }
+  ]
+}

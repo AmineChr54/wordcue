@@ -1,0 +1,25 @@
+{
+  "about": "Audition text. r1 packs the hard cases (long compound, umlaut, loanwords, acronym, digits, date) into one sample per voice. r2 is a longer narration. Digits are left as digits on purpose, to show which models need help.",
+  "lines": [
+    {
+      "id": "r1",
+      "lang": "de",
+      "text": "Siebzehn Uhr vierzig. Über der Küste liegt wieder Nebel. Seit dem Software-Update läuft das Leuchtfeuerüberwachungssystem über GPS, und am 4. April waren schon 27,5 Prozent aller Signale verspätet."
+    },
+    {
+      "id": "r1",
+      "lang": "en",
+      "text": "Five forty p.m. Fog is rolling over the coast again. Since the software update, the lighthouse monitoring system runs on GPS, and by April 4th, 27.5 percent of all signals were already late."
+    },
+    {
+      "id": "r2",
+      "lang": "de",
+      "text": "Stell dir vor, du stehst nachts auf einem Schiff. Irgendwo da draußen liegt die Küste, aber du siehst nur schwarzes Wasser. Dann dreht sich in weiter Ferne ein kleines Licht zu dir und zieht wieder vorbei. Lange Zeit verschwendeten Leuchttürme den größten Teil ihres Lichts, denn eine Flamme strahlt in alle Richtungen. In den achtzehnhundertzwanziger Jahren versuchte der französische Ingenieur Augustin Fresnel deshalb etwas anderes. Statt einer riesigen, schweren Linse legte er Ringe aus Glasprismen um die Flamme. Jeder Ring lenkt seinen Teil des Lichts in denselben flachen Strahl. So braucht man weniger Glas und erreicht viel mehr Weite. Die Flamme bleibt klein, und das Schiff findet trotzdem nach Hause."
+    },
+    {
+      "id": "r2",
+      "lang": "en",
+      "text": "Imagine standing on a ship at night. The coast is out there somewhere, but all you can see is dark water. Then, far away, a small light turns toward you and slides past again. For a long time, lighthouses wasted most of their light, because a flame shines in every direction. So in the eighteen twenties, a French engineer named Augustin Fresnel tried something different. Instead of one huge, heavy lens, he put rings of glass prisms around the flame. Each ring bends its share of the light into the same flat beam. That takes less glass and reaches much farther. The flame stays small, and the ship still finds its way home."
+    }
+  ]
+}

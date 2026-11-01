@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Voice audition</title>
+<style>
+  :root { --paper:#f6f4ee; --ink:#1c1b18; --mute:#6f6b62; --rule:#d6d2c7; --mark:#c8401f; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.5 "Segoe UI",system-ui,sans-serif; }
+  main { max-width:860px; margin:0 auto; padding:40px 24px 96px; }
+  h1 { font-size:28px; margin:0 0 6px; }
+  h2 { font-size:18px; margin:40px 0 4px; }
+  p { margin:0 0 12px; color:var(--mute); max-width:64ch; }
+  .tabs { display:flex; gap:20px; border-bottom:1px solid var(--rule); margin:24px 0 0; }
+  .tabs button { all:unset; cursor:pointer; padding:8px 0; color:var(--mute); border-bottom:2px solid transparent; }
+  .tabs button[aria-selected=true] { color:var(--ink); border-color:var(--ink); font-weight:600; }
+  .tabs button:focus-visible, .row button:focus-visible, .actions button:focus-visible { outline:2px solid var(--mark); outline-offset:2px; }
+  .say { border-left:2px solid var(--rule); padding-left:12px; font-size:15px; color:var(--mute); margin:12px 0 16px; }
+  .row { display:grid; grid-template-columns:44px 1fr auto; gap:14px; align-items:center; padding:12px 0; border-top:1px solid var(--rule); }
+  .row.current { background:#efeadf; box-shadow:-10px 0 0 #efeadf, 10px 0 0 #efeadf; }
+  .play { all:unset; cursor:pointer; width:40px; height:40px; line-height:40px; text-align:center; border:1px solid var(--ink); }
+  .play.on { background:var(--ink); color:var(--paper); }
+  .who b { font-weight:600; }
+  .who small { display:block; color:var(--mute); font-size:13px; }
+  .bar { height:3px; background:var(--rule); margin-top:6px; cursor:pointer; }
+  .bar i { display:block; height:100%; width:0; background:var(--ink); }
+  .stars button { all:unset; cursor:pointer; padding:0 2px; font-size:20px; color:var(--rule); }
+  .stars button.on { color:var(--mark); }
+  .actions { display:flex; gap:12px; margin-top:32px; flex-wrap:wrap; }
+  .actions button { all:unset; cursor:pointer; padding:9px 16px; border:1px solid var(--ink); }
+  .actions .main { background:var(--ink); color:var(--paper); }
+  kbd { font:12px Consolas,monospace; border:1px solid var(--rule); padding:0 5px; background:#fff; }
+  .keys { font-size:13px; color:var(--mute); margin-top:24px; }
+  .empty { color:var(--mute); padding:12px 0; border-top:1px solid var(--rule); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Voice audition</h1>
+  <p>Names are hidden so you judge by ear. All clips are at the same loudness. Rate each voice, then reveal which model it is. Rate honestly on the bad pronunciation too, because that's what the audience will hear.</p>
+  <div class="tabs" role="tablist" id="tabs"></div>
+  <div id="view"></div>
+  <div class="actions">
+    <button id="reveal">Reveal models</button>
+    <button id="export" class="main">Save my picks (picks.json)</button>
+  </div>
+  <div class="keys"><kbd>Space</kbd> play or pause &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> change voice &nbsp; <kbd>1</kbd>-<kbd>5</kbd> rate &nbsp; <kbd>R</kbd> restart</div>
+</main>
+<script>
+const DATA = /*DATA*/null;
+// This file is only a template until build_audition.py fills in DATA. Opened directly, show the voice library.
+if (!DATA) location.replace('../docs/voices/index.html');
+const TABS = [
+  ['de', 'r1', 'German, round 1'], ['en', 'r1', 'English, round 1'],
+  ['de', 'r2', 'German, round 2'], ['en', 'r2', 'English, round 2'],
+];
+const STORE = 'voice-audition-ratings';
+const ratings = JSON.parse(localStorage.getItem(STORE) || '{}');
+const audio = new Audio();
+let tab = 0, revealed = false, current = 0, rows = [];
+
+function clipsFor(lang, round) {
+  return DATA.clips.filter(c => c.lang === lang && c.round === round)
+    .sort((a, b) => parseInt(a.label.slice(6)) - parseInt(b.label.slice(6)));
+}
+function unrated(lang, round) {
+  return clipsFor(lang, round).filter(c => !ratings[`${c.lang}:${c.round}:${c.key}`]).length;
+}
+function details(c) {
+  const speed = c.speed == null ? 'not measured' : c.speed <= 1
+    ? `${(1 / c.speed).toFixed(1)}x faster than real time`
+    : `${c.speed.toFixed(1)}x slower than real time`;
+  return `${c.engine}, ${c.voice} · ${speed} · ${c.ram ?? '?'} GB RAM · ${c.licence}`;
+}
+function play(i) {
+  const c = rows[i];
+  if (!c) return;
+  if (current === i && audio.src.endsWith(c.file.split('/').pop()) && !audio.paused) { audio.pause(); return draw(); }
+  if (!audio.src.endsWith(c.file.split('/').pop())) audio.src = c.file;
+  current = i;
+  audio.play();
+  draw();
+}
+function rate(c, n) {
+  const id = `${c.lang}:${c.round}:${c.key}`;
+  ratings[id] = ratings[id] === n ? 0 : n;
+  localStorage.setItem(STORE, JSON.stringify(ratings));
+  draw();
+}
+function draw() {
+  const [lang, round] = TABS[tab];
+  rows = clipsFor(lang, round);
+  document.getElementById('tabs').innerHTML = TABS.map((t, i) =>
+    `<button role="tab" aria-selected="${i === tab}" data-tab="${i}">${t[2]}${unrated(t[0], t[1]) ? ` (${unrated(t[0], t[1])} to rate)` : ''}</button>`).join('');
+  const line = DATA.lines.find(l => l.lang === lang && l.id === round);
+  const view = document.getElementById('view');
+  view.innerHTML = `<div class="say">${line.text}</div>` + (rows.length ? rows.map((c, i) => {
+    const r = ratings[`${c.lang}:${c.round}:${c.key}`] || 0;
+    const on = audio.src.endsWith(c.file.split('/').pop()) && !audio.paused;
+    return `<div class="row ${i === current ? 'current' : ''}">
+      <button class="play ${on ? 'on' : ''}" data-play="${i}" aria-label="Play ${c.label}">${on ? '❚❚' : '▶'}</button>
+      <div class="who"><b>${c.label}</b>${revealed ? `<small>${details(c)}</small>` : ''}<div class="bar" data-bar="${i}"><i id="b${i}"></i></div></div>
+      <div class="stars">${[1, 2, 3, 4, 5].map(n => `<button class="${n <= r ? 'on' : ''}" data-rate="${i}" data-n="${n}" aria-label="${n} stars">★</button>`).join('')}</div>
+    </div>`;
+  }).join('') : `<div class="empty">Round 2 clips appear here once you've picked your shortlist from round 1.</div>`);
+}
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-play],[data-rate],[data-bar]');
+  if (!t) return;
+  if (t.dataset.tab !== undefined) { tab = +t.dataset.tab; current = 0; audio.pause(); draw(); }
+  else if (t.dataset.play !== undefined) play(+t.dataset.play);
+  else if (t.dataset.rate !== undefined) rate(rows[+t.dataset.rate], +t.dataset.n);
+  else if (t.dataset.bar !== undefined) {
+    const i = +t.dataset.bar, f = e.offsetX / t.clientWidth;
+    if (current !== i || !audio.src.endsWith(rows[i].file.split('/').pop())) { audio.src = rows[i].file; current = i; }
+    audio.onloadedmetadata = () => { audio.currentTime = f * audio.duration; audio.onloadedmetadata = null; };
+    if (audio.duration) audio.currentTime = f * audio.duration;
+    audio.play(); draw();
+  }
+});
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') { e.preventDefault(); audio.src && !audio.paused ? audio.pause() : play(Math.max(current, 0)); draw(); }
+  else if (e.key === 'ArrowDown') { e.preventDefault(); audio.pause(); current = Math.min(current + 1, rows.length - 1); play(current); }
+  else if (e.key === 'ArrowUp') { e.preventDefault(); audio.pause(); current = Math.max(current - 1, 0); play(current); }
+  else if (e.key === 'r' || e.key === 'R') { audio.currentTime = 0; audio.play(); draw(); }
+  else if (/^[1-5]$/.test(e.key) && rows[current]) rate(rows[current], +e.key);
+});
+audio.addEventListener('timeupdate', () => {
+  const bar = document.getElementById('b' + current);
+  if (bar && audio.duration) bar.style.width = (audio.currentTime / audio.duration * 100) + '%';
+});
+audio.addEventListener('ended', draw);
+document.getElementById('reveal').onclick = e => {
+  revealed = !revealed;
+  e.target.textContent = revealed ? 'Hide models' : 'Reveal models';
+  draw();
+};
+if (DATA) draw();
+document.getElementById('export').onclick = () => {
+  const picks = DATA.clips.map(c => ({
+    lang: c.lang, round: c.round, label: c.label, engine: c.engine, voice: c.voice, key: c.key,
+    stars: ratings[`${c.lang}:${c.round}:${c.key}`] || 0,
+  })).filter(p => p.stars).sort((a, b) => b.stars - a.stars);
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([JSON.stringify(picks, null, 2)], { type: 'application/json' }));
+  a.download = 'picks.json';
+  a.click();
+};
+</script>
+</body>
+</html>

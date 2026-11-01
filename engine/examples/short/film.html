@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Vertical starter</title>
+<style>
+  #fit { width:900px; height:1600px; }
+  #stage { position:relative; width:900px; height:1600px; overflow:hidden; background:#f4f1ea; color:#1a1a18; font:64px/1.2 "Segoe UI",sans-serif; }
+  #world { position:absolute; left:0; top:0; width:900px; height:1600px; }
+  #title { position:absolute; left:70px; top:200px; width:760px; }
+  #count { position:absolute; left:70px; top:1050px; font-size:260px; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div id="title">Hochformat</div>
+  <div id="count">0</div>
+</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../film.js"></script>
+<script src="../../player.js"></script>
+<script>
+FilmPlayer.start(() => Film.create({
+  stage: '#stage', world: '#world', timing: TIMING, width: 900, height: 1600,
+  steps: [
+    { at: 'eins', anim: '#title', kf: { opacity: [0, 1] }, dur: .3 },
+    { at: 'zwei:Zahl', camera: true, x: 450, y: 1150, zoom: 1.4, dur: .5 },
+    { at: 'zwei:Zahl', count: '#count', from: 0, to: 42, dur: .7 },
+  ],
+}), { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

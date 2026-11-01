@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordcue prompt helper</title>
+<meta name="description" content="Think through story, look, motion and voice with live examples, and get a strong prompt for your video.">
+<link rel="stylesheet" href="prompt.css">
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="../">Wordcue</a>
+  <h1>Build a better prompt.</h1>
+  <p>A vague prompt gets a generic film. Work through these with examples you can see and hear. Unsure about something? Press <b>Ask me about this</b>, and the agent will ask you about it with recommendations.</p>
+</header>
+<main class="layout">
+  <div class="topics" id="topics"></div>
+  <aside class="result" aria-label="Your prompt">
+    <div class="result-in">
+      <div class="result-head">
+        <h2>Your prompt</h2>
+        <button type="button" id="copy" class="primary">Copy</button>
+      </div>
+      <ul id="tips" class="tips"></ul>
+      <pre id="prompt" tabindex="0"></pre>
+      <div class="result-foot">
+        <button type="button" id="share">Copy link to these choices</button>
+        <button type="button" id="reset">Start over</button>
+      </div>
+      <p class="private">Nothing you type leaves this page unless you copy it.</p>
+    </div>
+  </aside>
+</main>
+<script src="../voices/voices.js"></script>
+<script src="prompt.js"></script>
+</body>
+</html>

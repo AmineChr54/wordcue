@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The lens, as a searchlight</title>
+<style>
+  @font-face { font-family:'Bebas Neue'; src:url(../../docs/fonts/bebas-neue-400.woff2) format('woff2'); }
+  #fit { width:1600px; height:900px; }
+  #stage { position:relative; width:1600px; height:900px; overflow:hidden; background:#000; color:#fff; font:400 170px/.95 'Bebas Neue',sans-serif; }
+  #world { position:absolute; inset:0; width:1600px; height:900px; }
+  #lit { position:absolute; inset:0; }
+  .w { position:absolute; opacity:0; white-space:nowrap; }
+  /* A grey wedge from the lamp, below the words, masked by the same angle. */
+  #wedge { position:absolute; inset:0; background:#333; }
+  #tag { position:absolute; right:40px; top:30px; font:400 30px 'Bebas Neue',sans-serif; letter-spacing:.05em; color:#fff; mix-blend-mode:difference; z-index:5; }
+  #rings { position:absolute; inset:0; opacity:0; }
+  #rings circle { fill:none; stroke:#fff; stroke-width:3; }
+  #lamp { position:absolute; left:782px; top:432px; width:36px; height:36px; background:#fff; }
+  #bar { position:absolute; left:800px; top:430px; width:800px; height:40px; background:#fff; transform-origin:0 50%; transform:scaleX(0); opacity:0; }
+  #km { position:absolute; left:0; top:0; width:1600px; height:900px; background:#fff; color:#000; display:flex; flex-direction:column; align-items:center; justify-content:center; opacity:0; clip-path:inset(50% 0 50% 0); }
+  #km b { font-weight:400; font-size:430px; line-height:.9; }
+  #km span { font-size:90px; }
+  #km small { font:400 34px 'Bebas Neue',sans-serif; letter-spacing:.06em; margin-top:26px; color:#444; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div id="wedge"></div>
+  <div id="lit">
+    <div class="w" id="w1" style="left:330px;top:70px">A flame shines</div>
+    <div class="w" id="w2" style="left:960px;top:300px">in every</div>
+    <div class="w" id="w3" style="left:960px;top:460px">direction</div>
+    <div class="w" id="w4" style="left:375px;top:725px;font-size:132px">most of it wasted</div>
+    <div class="w" id="w5" style="left:130px;top:360px;font-size:220px">1823</div>
+    <div class="w" id="w6" style="left:540px;top:70px">Cordouan</div>
+    <div class="w" id="w7" style="left:1000px;top:370px">Fresnel</div>
+    <div class="w" id="w8" style="left:445px;top:725px;font-size:132px">rings of glass</div>
+  </div>
+  <svg id="rings" width="1600" height="900"></svg>
+  <div id="lamp"></div>
+  <div id="bar"></div>
+  <div id="km"><span>Visible from more than</span><b>32 KM</b><small>Simplified. Source: Wikipedia, “Fresnel lens”</small></div>
+</div><div id="tag">AI voice · Made with Wordcue</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../engine/film.js"></script>
+<script src="../../engine/player.js"></script>
+<script>
+const rings = document.getElementById('rings');
+[60, 100, 140, 180, 220].forEach(r => {
+  const c = rings.appendChild(document.createElementNS('http://www.w3.org/2000/svg', 'circle'));
+  c.setAttribute('cx', 800); c.setAttribute('cy', 450); c.setAttribute('r', r); c.setAttribute('class', 'ring');
+});
+const lit = document.getElementById('lit'), wedge = document.getElementById('wedge');
+const L = id => TIMING.lines.find(l => l.id === id);
+const word = (id, w) => L(id).words.find(x => x.w.toLowerCase().startsWith(w)).start;
+
+/* One light, aimed at each word as it's spoken. Angle and width are a pure function of the time. */
+const K = [
+  [0, 0], [word('l1', 'a'), 0],
+  [word('l1', 'in') + .28, 90], [word('l1', 'every') + .1, 90],
+  [word('l1', 'direction') + .55, 450], [word('l1', 'most'), 540],
+  [word('l2', 'in'), 630], [word('l2', 'at'), 720], [word('l2', 'augustin'), 810], [word('l2', 'thin'), 900],
+  [word('l3', 'each'), 900], [word('l3', 'flat'), 1170],
+];
+const smooth = p => { const v = Math.min(1, Math.max(0, p)); return v * v * (3 - 2 * v); };
+function angleAt(t) {
+  for (let i = 1; i < K.length; i++) {
+    if (t < K[i][0]) {
+      const span = Math.min(.32, K[i][0] - K[i - 1][0]);
+      return K[i - 1][1] + (K[i][1] - K[i - 1][1]) * smooth((t - (K[i][0] - span)) / span);
+    }
+  }
+  return K[K.length - 1][1];
+}
+function beam(now) {
+  const angle = angleAt(now);
+  const opening = 170 - 46 * smooth((now - word('l1', 'shines')) / .4);
+  const width = opening + (5 - opening) * smooth((now - word('l3', 'each')) / (word('l3', 'flat') - word('l3', 'each')));
+  const mask = `conic-gradient(from ${(angle - width / 2).toFixed(2)}deg at 800px 450px, #000 0 ${width.toFixed(2)}deg, transparent ${width.toFixed(2)}deg)`;
+  lit.style.webkitMaskImage = mask;
+  lit.style.maskImage = mask;
+  wedge.style.webkitMaskImage = mask;
+  wedge.style.maskImage = mask;
+}
+
+const cut = (at, el) => ({ at, anim: el, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' });
+const off = (at, el) => ({ at, anim: el, kf: { opacity: [1, 0] }, dur: .001, ease: 'linear' });
+
+const STEPS = [
+  { at: 0, dur: TIMING.duration, fn: (p, elapsed) => beam(elapsed) },
+
+  cut('l1', '#w1'),
+  cut('l1:in', '#w2'),
+  cut('l1:every', '#w3'),
+  cut('l1:most', '#w4'),
+  off('l2-0.05', '#w1, #w2, #w3, #w4'),
+
+  cut('l2', '#w5'),
+  cut('l2:at', '#w6'),
+  cut('l2:Augustin', '#w7'),
+  cut('l2:thin', '#w8'),
+  cut('l2:rings', '#rings'),
+  { at: 'l2:rings', anim: '.ring', kf: { opacity: [0, 1] }, dur: .001, ease: 'linear', stagger: .12 },
+  off('l3:flat', '#w5, #w6, #w7, #w8'),
+  { at: 'l3:flat', anim: '#rings', kf: { opacity: [1, .25] }, dur: .3, ease: 'linear' },
+
+  /* The light stops turning and becomes one flat beam. */
+  { at: 'l3:flat', anim: '#bar', kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' },
+  { at: 'l3:flat', anim: '#bar', kf: { transform: ['scaleX(0)', 'scaleX(1)'] }, dur: .35, ease: 'out' },
+
+  cut('l4:more-0.15', '#km'),
+  { at: 'l4:more-0.15', anim: '#km', kf: { clipPath: ['inset(50% 0 50% 0)', 'inset(0 0 0 0)'] }, dur: .32, ease: 'out' },
+];
+
+FilmPlayer.start(() => Film.create({ stage: '#stage', world: '#world', timing: TIMING, steps: STEPS }),
+  { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How a sentence becomes a film</title>
+<style>
+  @font-face { font-family:Archivo; font-weight:900; src:url(../../docs/fonts/archivo-900.woff2) format('woff2'); }
+  @font-face { font-family:Archivo; font-weight:500; src:url(../../docs/fonts/archivo-500.woff2) format('woff2'); }
+  @font-face { font-family:'JetBrains Mono'; font-weight:500; src:url(../../docs/fonts/jetbrains-mono-500.woff2) format('woff2'); }
+  @font-face { font-family:'Old Standard TT'; src:url(../../docs/fonts/old-standard-400.woff2) format('woff2'); }
+  @font-face { font-family:'Bebas Neue'; src:url(../../docs/fonts/bebas-neue-400.woff2) format('woff2'); }
+  @font-face { font-family:Fredoka; font-weight:600; src:url(../../docs/fonts/fredoka-600.woff2) format('woff2'); }
+  @font-face { font-family:Anton; src:url(../../docs/fonts/anton-400.woff2) format('woff2'); }
+  :root { --y:#FFD60A; --k:#0A0A0A; }
+  #fit { width:1600px; height:900px; }
+  #stage { position:relative; width:1600px; height:900px; overflow:hidden; background:var(--y); color:var(--k); font:900 96px/1.02 Archivo,sans-serif; }
+  #world { position:absolute; left:0; top:0; width:1600px; height:900px; }
+  .scene { position:absolute; inset:0; opacity:0; }
+  .abs { position:absolute; }
+  .night { background:var(--k); color:var(--y); }
+  .mono { font:500 26px/1.2 'JetBrains Mono',monospace; }
+  .small { font:500 40px/1.2 Archivo,sans-serif; }
+
+  #t1 { left:90px; top:210px; width:1420px; font-size:190px; line-height:1; }
+
+  .take { left:90px; width:1420px; height:190px; display:grid; grid-template-columns:190px 1fr 300px; gap:20px; align-items:center; padding:0 24px; }
+  .take.won { background:var(--k); color:var(--y); }
+  .take.lost { opacity:.28; }
+  .take { overflow:hidden; }
+  .scan { position:absolute; top:0; bottom:0; left:0; width:10px; background:var(--k); opacity:0; }
+  .take.won .scan { background:var(--y); }
+  .label { font:900 44px Archivo; }
+  .bars { display:flex; align-items:center; gap:5px; height:150px; }
+  .bars i { flex:1; background:currentColor; }
+  .score { font:500 34px 'JetBrains Mono',monospace; text-align:right; }
+
+  #stop { left:90px; top:300px; font-size:230px; line-height:.92; opacity:0; }
+  #stop-why { left:90px; top:140px; color:var(--y); opacity:0; }
+
+  #stamps { left:90px; top:290px; width:1420px; display:flex; flex-wrap:wrap; gap:50px 40px; }
+  #stamps span { display:inline-flex; flex-direction:column; opacity:0; }
+  #stamps b { font:900 118px/1 Archivo; }
+  #stamps em { font:500 28px 'JetBrains Mono',monospace; margin-top:12px; padding-top:10px; border-top:6px solid var(--k); }
+
+  #land { left:90px; top:170px; width:1420px; font-size:150px; line-height:1.02; }
+  #land span { opacity:0; }
+  #now { inset:0; background:var(--k); color:var(--y); font-size:560px; line-height:900px; text-align:center; opacity:0; letter-spacing:-.04em; }
+
+  #now span { display:inline-block; }
+  #rail { left:90px; top:340px; height:200px; width:1420px; }
+  .block { position:absolute; top:0; height:200px; background:var(--k); color:var(--y); display:flex; align-items:center; padding-left:20px; font:500 30px 'JetBrains Mono',monospace; overflow:hidden; box-shadow:inset -5px 0 0 var(--y); }
+  .block.hot { background:var(--y); color:var(--k); box-shadow:inset 0 0 0 8px var(--k); }
+  #rail-note { left:90px; top:610px; width:1420px; font:900 76px/1.05 Archivo,sans-serif; opacity:0; }
+  #rail-title { left:90px; top:150px; opacity:0; font-size:124px; white-space:nowrap; }
+
+  #strip { left:0; top:180px; height:240px; width:4000px; display:flex; gap:24px; }
+  #strip i { flex:none; width:380px; height:214px; background:var(--y); color:var(--k); display:flex; align-items:center; justify-content:center; font:500 28px 'JetBrains Mono',monospace; font-style:normal; }
+  .out { top:500px; width:690px; height:300px; background:var(--y); color:var(--k); display:flex; align-items:center; justify-content:center; font-size:110px; opacity:0; }
+
+  .look { position:absolute; inset:0; opacity:0; display:flex; align-items:center; justify-content:center; text-align:center; }
+  #l1 { background:#DFE6EE; color:#1B2A6B; font:400 200px 'Old Standard TT',serif; }
+  #l2 { background:#000; color:#fff; font:400 420px 'Bebas Neue',sans-serif; }
+  #l3 { background:#E8432E; color:#FFE14D; font:600 300px Fredoka,sans-serif; }
+  #l4 { background:#E6007E; color:#111; font:400 330px Anton,sans-serif; }
+
+  #ai { left:90px; top:300px; font-size:190px; line-height:1; opacity:0; }
+  #name { left:90px; top:250px; font-size:290px; letter-spacing:-.03em; opacity:0; }
+  #url { left:96px; top:600px; opacity:0; }
+  #tag { right:48px; bottom:40px; font:500 24px 'JetBrains Mono',monospace; opacity:0; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div class="scene" id="s1"><div class="abs" id="t1"></div></div>
+  <div class="scene" id="s2"></div>
+  <div class="scene night" id="s4"><div class="abs small" id="stop-why">If no take comes close enough</div><div class="abs" id="stop">BUILD<br>STOPS.</div></div>
+  <div class="scene" id="s5"><div class="abs" id="stamps"></div></div>
+  <div class="scene" id="s6"><div class="abs" id="land"></div></div>
+  <div class="scene" id="now"><span>NOW</span></div>
+  <div class="scene" id="s7"><div class="abs" id="rail-title">Change one sentence.</div><div class="abs" id="rail"></div><div class="abs small" id="rail-note">Everything after it moves by itself.</div></div>
+  <div class="scene night" id="s9"><div class="abs" id="strip"></div><div class="abs out" id="o1" style="left:90px">VIDEO</div><div class="abs out" id="o2" style="left:820px">PLAYER</div></div>
+  <div class="scene" id="s10"><div class="look" id="l1">every</div><div class="look" id="l2">PROJECT</div><div class="look" id="l3">gets a</div><div class="look" id="l4">NEW LOOK</div></div>
+  <div class="scene night" id="s11"><div class="abs" id="ai">This voice<br>is AI.</div><div class="abs" id="name">Wordcue</div><div class="abs mono" id="url">github.com/AmineChr54/wordcue</div></div>
+</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../engine/film.js"></script>
+<script src="../../engine/player.js"></script>
+<script>
+const line = id => TIMING.lines.find(l => l.id === id);
+const cut = (at, el) => ({ at, anim: el, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' });
+const off = (at, el) => ({ at, anim: el, kf: { opacity: [1, 0] }, dur: .001, ease: 'linear' });
+const hit = (at, el, from = 1.25) => ({ at, anim: el, kf: { opacity: [0, 1, 1], transform: [`scale(${from})`, 'scale(.98)', 'none'], offset: [0, .55, 1] }, dur: .2, ease: 'linear' });
+const stamp = t => `0:${t.toFixed(2).padStart(5, '0')}`;
+
+/* The three takes. Bars are an illustration. The winning take and score come from this film's own timing data. */
+const winner = line('a3');
+const s2 = document.getElementById('s2');
+[0, 1, 2].forEach(i => {
+  const row = s2.appendChild(document.createElement('div'));
+  row.className = 'abs take'; row.id = `take${i}`; row.style.top = `${130 + i * 220}px`;
+  row.innerHTML = `<div class="label">Take ${i + 1}</div><div class="bars" id="bars${i}"></div><div class="score" id="score${i}"></div><div class="scan" id="scan${i}"></div>`;
+  const bars = row.querySelector('.bars');
+  for (let b = 0; b < 90; b++) {
+    const h = 12 + Math.abs(Math.sin(b * (.37 + i * .05)) * Math.sin(b * .11 + i)) * 138;
+    bars.appendChild(document.createElement('i')).style.height = `${h}px`;
+  }
+});
+
+/* The real time stamp of every spoken word in this line. */
+const stamps = document.getElementById('stamps');
+const wordSpans = line('a5').words.map((w, i) => {
+  const s = stamps.appendChild(document.createElement('span'));
+  s.id = `w${i}`;
+  s.innerHTML = `<b>${w.w.replace(/[.,]/g, '')}</b><em>${stamp(w.start)}</em>`;
+  return { at: w.start, anim: `#w${i}`, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' };
+});
+
+const land = document.getElementById('land');
+const a6 = line('a6').words;
+const landing = a6.slice(0, -1).map((w, i) => {
+  const s = land.appendChild(document.createElement('span'));
+  s.id = `la${i}`; s.textContent = w.w + ' ';
+  return { at: w.start, anim: `#la${i}`, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' };
+});
+
+/* Line blocks at their true widths. The fourth grows, as if rewritten, and later ones shift. */
+const rail = document.getElementById('rail');
+const GROW = 200, SCALE = (1420 - GROW) / (line('a6').end - line('a1').start);
+const blockIds = ['a1', 'a2', 'a3', 'a4', 'a5', 'a6'];
+const blocks = blockIds.map((id, i) => {
+  const l = line(id), b = rail.appendChild(document.createElement('div'));
+  b.className = `block${i === 3 ? ' hot' : ''}`; b.id = `block${i}`;
+  b.style.left = `${(l.start - line('a1').start) * SCALE}px`;
+  b.style.width = `${(l.end - l.start) * SCALE}px`;
+  b.textContent = i + 1;
+  if (i === 3) b.style.zIndex = 2;
+  return b;
+});
+
+const strip = document.getElementById('strip');
+for (let i = 0; i < 9; i++) strip.appendChild(document.createElement('i')).textContent = `frame ${Math.round(line('a9').start * 30) + i * 30}`;
+
+const STEPS = [
+  /* Typed */
+  cut(0, '#s1'),
+  { at: 'a1', type: '#t1', text: 'Someone typed this sentence.', dur: line('a1').end - line('a1').start },
+  off('a1.end+0.42', '#s1'),
+
+  /* Takes */
+  cut('a2-0.02', '#s2'),
+  ...[0, 1, 2].map(i => ({ at: ['a2', 'a2:reads', 'a2:more'][i], anim: `#bars${i}`, kf: { clipPath: ['inset(0 100% 0 0)', 'inset(0 0 0 0)'] }, dur: 1, ease: 'linear' })),
+  /* A scan line reads each take from "checks" onward. */
+  ...[0, 1, 2].flatMap(i => [
+    { at: 'a3:checks', anim: `#scan${i}`, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' },
+    { at: 'a3:checks', anim: `#scan${i}`, kf: { left: ['0px', '1410px'] }, dur: line('a3').words.find(w => w.w.startsWith('closest')).start - line('a3').words.find(w => w.w.startsWith('checks')).start, ease: 'linear' },
+    { at: 'a3:closest', anim: `#scan${i}`, kf: { opacity: [1, 0] }, dur: .001, ease: 'linear' },
+  ]),
+  { at: 'a3:closest', set: `#take${winner.take}`, cls: 'won' },
+  ...[0, 1, 2].filter(i => i !== winner.take).map(i => ({ at: 'a3:closest', set: `#take${i}`, cls: 'lost' })),
+  { at: 'a3:wins', set: `#score${winner.take}`, text: `match ${winner.match.toFixed(2)}` },
+  off('a3.end+0.38', '#s2'),
+
+  /* Stops */
+  cut('a4-0.02', '#s4'),
+  cut('a4', '#stop-why'),
+  hit('a4:stops-0.06', '#stop'),
+  off('a4.end+0.48', '#s4'),
+
+  /* Time stamps */
+  cut('a5-0.02', '#s5'),
+  ...wordSpans,
+  off('a5.end+0.28', '#s5'),
+
+  /* Landing on the word */
+  cut('a6-0.02', '#s6'),
+  ...landing,
+  cut('a6:now', '#now'),
+  { at: 'a6:now', anim: '#now span', kf: { transform: ['scale(1.5)', 'scale(1)'] }, dur: .16, ease: 'out' },
+  off('a6.end+0.66', '#now'),
+  off('a6.end+0.66', '#s6'),
+
+  /* A change moves the rest */
+  cut('a7-0.02', '#s7'),
+  cut('a7', '#rail-title'),
+  { at: 'a7:spoken', anim: '#block3', kf: { width: [blocks[3].style.width, `${parseFloat(blocks[3].style.width) + GROW}px`] }, dur: .5, ease: 'move' },
+  { at: 'a8:moves', anim: '#block4, #block5', kf: { transform: ['none', `translateX(${GROW}px)`] }, dur: .6, ease: 'move' },
+  cut('a8', '#rail-note'),
+  off('a8.end+0.38', '#s7'),
+
+  /* Two outputs */
+  cut('a9-0.02', '#s9'),
+  { at: 'a9', anim: '#strip', kf: { transform: ['translateX(0)', 'translateX(-1500px)'] }, dur: line('a9').end - line('a9').start + .4, ease: 'linear' },
+  hit('a9:video', '#o1', 1.08),
+  hit('a9:interactive', '#o2', 1.08),
+  off('a9.end+0.38', '#s9'),
+
+  /* A new look on each word */
+  cut('a10-0.02', '#s10'),
+  cut('a10:every', '#l1'),
+  cut('a10:project', '#l2'),
+  cut('a10:gets', '#l3'),
+  cut('a10:new', '#l4'),
+  off('a10.end+1.28', '#s10'),
+
+  /* Disclosure and name */
+  cut('a11-0.02', '#s11'),
+  hit('a11:AI-0.08', '#ai', 1.1),
+  off('a12-0.02', '#ai'),
+  hit('a12:Word-0.08', '#name', 1.1),
+  cut('a12:Cue', '#url'),
+];
+
+FilmPlayer.start(() => Film.create({ stage: '#stage', world: '#world', timing: TIMING, steps: STEPS }),
+  { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Engine smoke test</title>
+<style>
+  #fit { width:1600px; height:900px; }
+  #stage { position:relative; width:1600px; height:900px; overflow:hidden; background:#f4f1ea; color:#1a1a18; font:32px/1.3 "Segoe UI",sans-serif; }
+  #world { position:absolute; inset:0; width:1600px; height:900px; }
+  #title { position:absolute; left:120px; top:120px; font-size:72px; }
+  #button { position:absolute; left:1120px; top:640px; width:300px; padding:24px; background:#1a1a18; color:#f4f1ea; text-align:center; }
+  #count { position:absolute; left:120px; top:560px; font-size:180px; font-variant-numeric:tabular-nums; }
+  #cursor { position:absolute; left:0; top:0; width:22px; height:22px; border:3px solid #c8401f; border-radius:50%; margin:-14px 0 0 -14px; z-index:9; }
+  .pressed { background:#c8401f !important; }
+  .film-ripple { position:absolute; width:90px; height:90px; border:3px solid #c8401f; border-radius:50%; opacity:0; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div id="title">Motorprobe</div>
+  <div id="button">Knopf</div>
+  <div id="count">0</div>
+  <div id="cursor"></div>
+</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../film.js"></script>
+<script src="../../player.js"></script>
+<script>
+FilmPlayer.start(() => Film.create({
+  stage: '#stage', world: '#world', timing: TIMING, cursor: '#cursor',
+  steps: [
+    { at: 'eins:Kamera-0.1', camera: true, focus: '#button', zoom: 1.6, dur: .8 },
+    { at: 'eins', anim: '#title', kf: { opacity: [0, 1], transform: ['translateY(30px)', 'none'] }, dur: .5 },
+    { at: 'zwei:Klick', cursor: '#button', click: true },
+    { at: 'zwei:Klick', set: '#button', cls: 'pressed' },
+    { at: 'drei:Zahl', camera: true, focus: '#count', zoom: 1.4 },
+    { at: 'drei:Zahl', count: '#count', from: 0, to: 42, dur: 1.2 },
+    { at: 'drei:danach', camera: true, zoom: 1 },
+    { at: 'drei:danach', anim: '#title', kf: { opacity: [1, .2] }, dur: .5 },
+  ],
+}), { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

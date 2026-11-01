@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Warum Brücken Fugen haben</title>
+<style>
+  @font-face { font-family:Anton; src:url(../../docs/fonts/anton-400.woff2) format('woff2'); }
+  :root { --m:#E6007E; --k:#111; --p:#F6F1E7; }
+  #fit { width:900px; height:1600px; }
+  #stage { position:relative; width:900px; height:1600px; overflow:hidden; background:var(--m); color:var(--k); font:400 138px/1.18 Anton,sans-serif; }
+  #world { position:absolute; left:0; top:0; width:900px; height:1600px; background:var(--m); }
+  .t { position:absolute; left:60px; width:800px; opacity:0; }
+  .small { font-size:46px; line-height:1.15; }
+  #deck { position:absolute; left:-30px; top:880px; width:640px; height:90px; background:var(--k); transform-origin:0 50%; opacity:0; }
+  .pier { position:absolute; top:970px; width:70px; height:280px; background:var(--k); opacity:0; }
+  #note { position:absolute; left:60px; top:1262px; font-size:40px; color:var(--p); opacity:0; }
+  #heat { position:absolute; left:60px; top:1320px; font-size:200px; line-height:1; color:var(--p); opacity:0; }
+  #result { position:absolute; left:0; top:0; width:900px; height:1600px; background:var(--k); color:var(--p); opacity:0; }
+  #result b { position:absolute; left:60px; top:520px; font-weight:400; font-size:158px; line-height:1; color:var(--m); white-space:nowrap; }
+  #result span { position:absolute; left:60px; top:300px; width:780px; font-size:70px; line-height:1.1; }
+  #result small { position:absolute; left:60px; top:860px; width:780px; font-size:38px; line-height:1.25; }
+  #joint { position:absolute; left:0; top:0; width:900px; height:1600px; background:var(--p); opacity:0; }
+  #left, #right { position:absolute; top:760px; height:190px; background:var(--k); }
+  #left { left:-40px; width:430px; clip-path:polygon(0 0, 100% 0, 100% 22%, 88% 22%, 88% 44%, 100% 44%, 100% 66%, 88% 66%, 88% 88%, 100% 88%, 100% 100%, 0 100%); }
+  #right { left:510px; width:430px; clip-path:polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 88%, 12% 88%, 12% 66%, 0 66%, 0 44%, 12% 44%, 12% 22%, 0 22%); }
+  #joint .t { color:var(--m); }
+  #crash { position:absolute; left:360px; top:690px; width:180px; height:330px; background:var(--m); clip-path:polygon(50% 0, 62% 34%, 100% 38%, 70% 58%, 82% 100%, 50% 72%, 18% 100%, 30% 58%, 0 38%, 38% 34%); opacity:0; }
+  #car { position:absolute; left:0; top:640px; transform:translate(-300px,0); width:220px; height:120px; opacity:0; }
+  #car i { position:absolute; left:20px; top:0; width:180px; height:86px; background:var(--m); }
+  #car u { position:absolute; top:76px; width:44px; height:44px; border-radius:50%; background:var(--k); }
+  #tag { position:absolute; left:60px; top:1440px; width:780px; font-size:30px; line-height:1.3; color:var(--k); opacity:0; }
+
+  #abut { position:absolute; left:830px; top:880px; width:120px; height:420px; background:var(--k); opacity:0; }
+  #joint { background:var(--m) !important; }
+  #joint .t { color:var(--k); }
+  #solidL, #solidR { position:absolute; top:760px; height:190px; width:510px; background:var(--k); }
+  #solidL { left:-60px; transform-origin:0 100%; }
+  #solidR { left:450px; transform-origin:100% 100%; }
+  #left { left:-60px !important; width:480px !important; opacity:0; }
+  #right { left:480px !important; width:480px !important; opacity:0; }
+  #crash { background:var(--p) !important; }
+  #car i { background:var(--p) !important; }
+  #deg-unit { font-size:110px; }
+  #tag-top { position:absolute; left:60px; top:50px; font-size:32px; z-index:6; color:#111; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div class="t" id="t1" style="top:130px">IM SOMMER WIRD DIE BRÜCKE LÄNGER.</div>
+  <div class="t" id="t2" style="top:130px">STAHL DEHNT SICH AUS.</div>
+  <div class="pier" id="p1" style="left:150px"></div>
+  <div class="pier" id="p2" style="left:430px"></div>
+  <div id="abut"></div>
+  <div id="deck"></div>
+  <div id="note">Darstellung stark übertrieben</div>
+  <div id="heat">+<span id="deg">0</span> <span id="deg-unit">GRAD</span></div>
+
+  <div id="result">
+    <span>100 m Stahl,<br>30 Grad mehr</span>
+    <b>RUND 3½ CM</b>
+    <small>100 m × 30 K × 0,000012 pro K = 3,6 cm, gerundet.<br>Eigene Berechnung mit einem typischen Stahlwert.</small>
+  </div>
+
+  <div id="joint">
+    <div class="t" id="t4" style="top:130px">OHNE LÜCKE VERFORMT SIE SICH.</div>
+    <div class="t" id="t5" style="top:130px">DAFÜR GIBT ES DIE FUGE.</div>
+    <div class="t" id="t6" style="top:1060px;color:var(--k)">KLACK-KLACK.</div>
+    <div id="solidL"></div><div id="solidR"></div>
+    <div id="left"></div>
+    <div id="right"></div>
+    <div id="crash"></div>
+    <div id="car"><i></i><u style="left:36px"></u><u style="left:140px"></u></div>
+    <div id="tag">Quellen: Wikipedia, „Thermal expansion“ und „Expansion joint“.</div>
+  </div>
+</div><div id="tag-top">KI-Stimme · Gemacht mit Wordcue</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../engine/film.js"></script>
+<script src="../../engine/player.js"></script>
+<script>
+const cut = (at, el) => ({ at, anim: el, kf: { opacity: [0, 1] }, dur: .001, ease: 'linear' });
+const off = (at, el) => ({ at, anim: el, kf: { opacity: [1, 0] }, dur: .001, ease: 'linear' });
+const hit = (at, el) => ({ at, anim: el, kf: { opacity: [0, 1, 1], transform: ['translateY(70px)', 'translateY(-6px)', 'none'], offset: [0, .6, 1] }, dur: .18, ease: 'linear' });
+
+/* The car drives so that its axles hit the gap on the spoken "Klack-Klack". */
+const klack = TIMING.lines.find(l => l.id === 'c6').words.find(w => w.w.startsWith('Klack')).start;
+const SPEED = 340, AXLES = [162, 58], GAP = 450;
+const carEnter = klack - (GAP - AXLES[0] + 240) / SPEED;
+
+const STEPS = [
+  /* It grows when that's said, and again as the heat rises. */
+  cut(0, '#deck'), cut(0, '#p1'), cut(0, '#p2'), cut(0, '#abut'),
+  hit('c1', '#t1'),
+  { at: 'c1:länger-0.1', anim: '#deck', kf: { transform: ['scaleX(1)', 'scaleX(1.12)'] }, dur: .6, ease: 'out' },
+  cut('c1:länger', '#note'),
+
+  off('c2-0.02', '#t1'),
+  hit('c2', '#t2'),
+  cut('c2:Hitze', '#heat'),
+  { at: 'c2:Hitze', count: '#deg', from: 0, to: 30, dur: .9, ease: 'out' },
+  { at: 'c2:Hitze', anim: '#world', kf: { backgroundColor: ['#E6007E', '#FF2A00'] }, dur: .9, ease: 'linear' },
+  { at: 'c2:Hitze', anim: '#deck', kf: { transform: ['scaleX(1.12)', 'scaleX(1.32)'] }, dur: .9, ease: 'out' },
+
+  /* A hard cut to the number. */
+  cut('c3:wachsen-0.2', '#result'),
+  { at: 'c3:wachsen-0.2', anim: '#tag-top', kf: { color: ['#111', '#F6F1E7'] }, dur: .001, ease: 'linear' },
+  { at: 'c3:rund-0.05', anim: '#result b', kf: { opacity: [0, 1], transform: ['scale(1.25)', 'none'], transformOrigin: ['left', 'left'] }, dur: .18, ease: 'out' },
+  { at: 'c3:Zentimeter', anim: '#result small', kf: { opacity: [0, 1] }, dur: .2, ease: 'linear' },
+
+  /* One solid deck with no gap. On "verformen" it buckles. */
+  off('c4-0.02', '#result'),
+  cut('c4-0.02', '#joint'),
+  { at: 'c4-0.02', anim: '#tag-top', kf: { color: ['#F6F1E7', '#111'] }, dur: .001, ease: 'linear' },
+  hit('c4', '#t4'),
+  cut('c4:verformen', '#crash'),
+  { at: 'c4:verformen', anim: '#solidL', kf: { transform: ['none', 'rotate(-7deg)'] }, dur: .22, ease: 'out' },
+  { at: 'c4:verformen', anim: '#solidR', kf: { transform: ['none', 'rotate(7deg)'] }, dur: .22, ease: 'out' },
+
+  /* The word "Dehnungsfuge" opens the gap. */
+  off('c5-0.02', '#t4'), off('c5-0.02', '#crash'),
+  hit('c5', '#t5'),
+  { at: 'c5', anim: '#solidL', kf: { transform: ['rotate(-7deg)', 'none'] }, dur: .25, ease: 'out' },
+  { at: 'c5', anim: '#solidR', kf: { transform: ['rotate(7deg)', 'none'] }, dur: .25, ease: 'out' },
+  off('c5:Dehnungsfuge', '#solidL, #solidR'),
+  cut('c5:Dehnungsfuge', '#left'), cut('c5:Dehnungsfuge', '#right'),
+
+  cut(carEnter, '#car'),
+  { at: carEnter, dur: 3.4, fn: (p, t) => {
+    const x = -240 + SPEED * t;
+    const lift = Math.max(...AXLES.map(a => Math.max(0, 1 - Math.abs(x + a - GAP) / 30) * 18));
+    document.getElementById('car').style.transform = `translate(${x.toFixed(2)}px,${(-lift).toFixed(2)}px)`;
+  } },
+  hit('c6:Klack', '#t6'),
+  { at: 'c6:Klack', anim: '#t6', kf: { color: ['#111', '#F6F1E7'] }, dur: .001, ease: 'linear' },
+  { at: 'c6.end', anim: '#tag', kf: { opacity: [0, 1] }, dur: .2, ease: 'linear' },
+];
+
+FilmPlayer.start(() => Film.create({ stage: '#stage', world: '#world', timing: TIMING, steps: STEPS, width: 900, height: 1600 }),
+  { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

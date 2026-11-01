@@ -1,0 +1,21 @@
+# Private projects: films made with the kit stay out of this public repo.
+/pilots/
+/films/
+/used-looks.md
+/reference/
+
+# Generated or downloaded
+voice-lab/venvs/
+voice-lab/cache/
+voice-lab/out/
+voice-lab/run_queue*.sh
+engine/node_modules/
+engine/.venv/
+engine/cache/
+__pycache__/
+build/
+*.wav
+*.mp4
+
+# The site's example films are the one exception.
+!docs/films/**/*.mp4

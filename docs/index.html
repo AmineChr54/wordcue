@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wordcue: films cued by spoken words</title>
+<meta name="description" content="Make narrated explainer videos on your own computer, with local AI voices and visuals cued by spoken words.">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+
+<header class="hero">
+  <nav class="nav" aria-label="Main">
+    <a class="brand" href="./">Wordcue</a>
+    <span class="links">
+      <a href="#looks">Looks</a>
+      <a href="#cues">Word cues</a>
+      <a href="#voices">Voices</a>
+      <a href="#how">How it works</a>
+      <a href="prompt/">Prompt helper</a>
+      <a href="https://github.com/AmineChr54/wordcue">GitHub</a>
+    </span>
+  </nav>
+  <h1>The words<br>cue the picture.</h1>
+  <p class="lead">Wordcue makes narrated explainer videos on your own computer. You describe the film, Claude Code directs it, and a local AI voice sets the timing of every animation.</p>
+  <figure class="player" id="hero-player">
+    <div class="screen">
+      <video id="hero-video" src="films/sentence/film.mp4" poster="films/sentence/poster.jpg" playsinline muted loop preload="metadata" aria-label="How a sentence becomes a film, a 34-second film"></video>
+      <iframe id="hero-frame" title="Interactive version of the film" hidden></iframe>
+    </div>
+    <figcaption class="controls">
+      <button id="hero-sound" type="button">▶ Play with sound</button>
+      <span class="switch" role="group" aria-label="Version">
+        <button id="show-video" type="button" aria-pressed="true">MP4</button>
+        <button id="show-player" type="button" aria-pressed="false">Interactive</button>
+      </span>
+      <span class="note">Same source, two outputs. This film was made with Wordcue, and its voice is AI.</span>
+    </figcaption>
+  </figure>
+</header>
+
+<section class="looks" id="looks">
+  <h2>Same words,<br>three looks.</h2>
+  <p>There's no house style. These three films share one script and one voice. Only the look and motion change, and every project starts fresh.</p>
+  <button id="looks-play" type="button" class="big">▶ Play all three</button>
+  <div class="triptych">
+    <figure><video src="films/lens-plate/film.mp4" poster="films/lens-plate/poster.jpg" playsinline preload="metadata" aria-label="Engineering plate version"></video><figcaption><b>Engineering plate</b> Lines drawn slowly, like a printed figure.</figcaption></figure>
+    <figure><video src="films/lens-beam/film.mp4" poster="films/lens-beam/poster.jpg" playsinline preload="metadata" aria-label="Searchlight version"></video><figcaption><b>Searchlight</b> The light swings to each word as it's said.</figcaption></figure>
+    <figure><video src="films/lens-paper/film.mp4" poster="films/lens-paper/poster.jpg" playsinline preload="metadata" aria-label="Cut paper version"></video><figcaption><b>Cut paper</b> Everything lands with a bounce.</figcaption></figure>
+  </div>
+  <p class="source">Facts from Wikipedia, “Fresnel lens”. AI voice.</p>
+</section>
+
+<section class="cues" id="cues">
+  <h2>Rewrite a sentence.<br>The timing follows.</h2>
+  <p>The animation isn't placed on a clock. It's attached to words. Switch the sentence and press play: these are two real recordings, and the three cues move by themselves.</p>
+  <div class="demo">
+    <div class="switch" role="group" aria-label="Sentence version">
+      <button id="v-a" type="button" aria-pressed="true">Short sentence</button>
+      <button id="v-b" type="button" aria-pressed="false">Rewritten sentence</button>
+    </div>
+    <p class="said" id="said"></p>
+    <div class="scene" id="scene" aria-hidden="true">
+      <div id="sc-tower"></div><div id="sc-lamp"></div><div id="sc-beam"></div><div id="sc-ship"></div><div id="sc-sea"></div>
+    </div>
+    <div class="rail" id="rail"><div class="head" id="head"></div></div>
+    <ul class="pins" id="pins"></ul>
+    <button id="cue-play" type="button" class="big">▶ Play</button>
+  </div>
+</section>
+
+<section class="short">
+  <div>
+    <h2>Another language.<br>Another format.</h2>
+    <p>A German Short in portrait, with a different voice and a poster look of its own. Every voice here runs locally, in German or English.</p>
+    <p class="source">Calculation shown on screen. Facts from Wikipedia. AI voice.</p>
+  </div>
+  <video src="films/bridge/film.mp4" poster="films/bridge/poster.jpg" controls playsinline preload="metadata" aria-label="Warum Brücken Fugen haben, a German vertical film"></video>
+</section>
+
+<section class="voices" id="voices">
+  <h2>Hear the voices.</h2>
+  <p>All samples are AI-generated. Each one runs on a laptop CPU. Press a name to hear it.</p>
+  <div class="switch" role="group" aria-label="Language">
+    <button id="l-de" type="button" aria-pressed="true">German</button>
+    <button id="l-en" type="button" aria-pressed="false">English</button>
+  </div>
+  <div class="wall" id="wall"></div>
+  <p><a class="more" href="voices/">Every voice, with licences and ratings →</a></p>
+</section>
+
+<section class="how" id="how">
+  <h2>How a film gets made.</h2>
+  <ol class="steps">
+    <li><b>Brief</b> You describe it. Claude writes down the audience, the takeaway and the allowed facts.</li>
+    <li><b>Story</b> Claude writes the script. If the angle is unclear, rival outlines compete.</li>
+    <li><b>Look</b> A new look, clearly different from your earlier projects.</li>
+    <li><b>Voice</b> Each line is recorded several times. Speech recognition keeps the closest take, and the build stops if none matches.</li>
+    <li><b>Build</b> The animation hangs on word times, so a title can land on its word.</li>
+    <li><b>Review</b> An independent reviewer checks facts and frames, for up to two rounds.</li>
+    <li><b>Render</b> One page becomes an MP4 and an interactive player. Only you can judge the sound, so you listen last.</li>
+  </ol>
+</section>
+
+<section class="helper" id="prompt">
+  <h2>A film is only as good<br>as its prompt.</h2>
+  <p>The prompt helper walks you through story, look, motion and voice with examples you can see and hear, then writes the prompt. Not sure about something? Press <b>Ask me about this</b>, and the agent will ask you with recommendations.</p>
+  <a class="big" href="prompt/">Build your prompt →</a>
+</section>
+
+<section class="scope">
+  <h2>What it covers, honestly.</h2>
+  <table>
+    <thead><tr><th scope="col">Type</th><th scope="col">Output</th><th scope="col">Tested so far</th></tr></thead>
+    <tbody>
+      <tr><td>Narrated explainer, YouTube video, product film</td><td>MP4 and HTML</td><td><b>Used for real</b>, up to about 90 seconds</td></tr>
+      <tr><td>Vertical Short</td><td>MP4 and HTML</td><td>The short film above, not yet in real use</td></tr>
+      <tr><td>Pitch</td><td>HTML, with an MP4 backup</td><td>Not yet run</td></tr>
+      <tr><td>Live demo, by keypress</td><td>HTML</td><td>Not yet run</td></tr>
+      <tr><td>Technical system explorer</td><td>Interactive page</td><td>Not yet run</td></tr>
+    </tbody>
+  </table>
+  <p><b>It can't do these today:</b> real camera footage or screen recordings, background music or sound effects, talking heads, avatars or photo-real AI video. Everything on screen is animation built in HTML. It runs on Windows only for now.</p>
+</section>
+
+<section class="start" id="start">
+  <h2>Try it.</h2>
+  <p>You need Windows, Git Bash, uv, ffmpeg, Node.js, Microsoft Edge and <a href="https://claude.com/claude-code">Claude Code</a>.</p>
+<pre><code>git clone https://github.com/AmineChr54/wordcue
+cd wordcue
+bash setup.sh
+bash claude/sync.sh install
+cp used-looks.example.md used-looks.md</code></pre>
+  <p>Then open Claude Code and describe your film. The <a href="https://github.com/AmineChr54/wordcue#readme">README</a> has the full workflow.</p>
+</section>
+
+<footer>
+  <p><b>Wordcue</b> is MIT-licensed. Voices and models keep their own terms. All narration on this site is AI-generated. Fonts are under the SIL Open Font License. <a href="https://github.com/AmineChr54/wordcue">Source on GitHub</a>.</p>
+</footer>
+
+<script src="voices/voices.js"></script>
+<script src="assets/cues.js"></script>
+<script src="assets/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "voice": { "engine": "supertonic3", "voice": "F2", "lang": "de", "speed": 1.05, "takes": 2 },
+  "gap": 0.3,
+  "lines": [
+    { "id": "eins", "text": "Dieser Satz schiebt die Kamera an den Rand der Bühne." },
+    { "id": "zwei", "text": "Sobald das Wort Klick fällt, landet der Zeiger auf dem Knopf.", "stop": true },
+    { "id": "drei", "text": "Die Zahl zählt bis 42, und danach zieht sich alles zurück." }
+  ]
+}

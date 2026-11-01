@@ -1,0 +1,31 @@
+{
+  "voice": {
+    "engine": "supertonic3",
+    "voice": "M1",
+    "lang": "en",
+    "speed": 1.0,
+    "takes": 3
+  },
+  "gap": 0.4,
+  "lines": [
+    {
+      "id": "l1",
+      "text": "A flame shines in every direction, so most of its light is wasted."
+    },
+    {
+      "id": "l2",
+      "text": "In 1823, at the Cordouan lighthouse, Augustin Fresnel's lens gathered it with thin rings of glass.",
+      "say": "In eighteen twenty-three, at the Cordouan lighthouse, Augustin Fray-nel's lens gathered it with thin rings of glass."
+    },
+    {
+      "id": "l3",
+      "text": "Each ring bends its share of the light into a flat beam."
+    },
+    {
+      "id": "l4",
+      "text": "Ships could see it from more than 32 kilometres away.",
+      "say": "Ships could see it from more than thirty-two kilometres away.",
+      "gap": 1.8
+    }
+  ]
+}

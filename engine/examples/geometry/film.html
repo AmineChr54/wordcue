@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Geometry test</title>
+<!-- A test of the measurement helpers. Its plain look is not a template. -->
+<style>
+  #fit { width:1600px; height:900px; }
+  #stage { position:relative; width:1600px; height:900px; overflow:hidden; background:#fff; color:#000; font:40px/1.3 sans-serif; }
+  #world { position:absolute; left:0; top:0; width:3200px; height:900px; }
+  .region { position:absolute; top:0; width:1600px; height:900px; }
+  .box { position:absolute; width:440px; padding:24px; border:2px solid #000; }
+  #moving { position:absolute; opacity:0; background:#fff; }
+  #total { position:absolute; left:220px; top:330px; font-size:120px; opacity:0; }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div class="region" id="r-one" style="left:0">
+    <div class="box" style="left:120px;top:300px"><span id="entry">F-XX 1234</span></div>
+    <div class="box" style="left:1000px;top:300px">Liste<br><span id="slot">&nbsp;</span></div>
+    <div id="moving">F-XX 1234</div>
+  </div>
+  <div class="region" id="r-two" style="left:1600px"><div id="total">Ergebnis</div></div>
+</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../film.js"></script>
+<script src="../../player.js"></script>
+<script src="../../geometry.js"></script>
+<script>
+const cam = Geometry.camera({ one: [0, 0, 1600, 900], two: [1600, 0, 1600, 900] });
+
+FilmPlayer.start(() => {
+  Geometry.place('#moving', '#entry');
+  const { dx, dy } = Geometry.between('#entry', '#slot');
+  return Film.create({
+    stage: '#stage', world: '#world', timing: TIMING,
+    steps: [
+      cam('eins:Formular', 'one', 340, 400, 1.4, .6),
+      cam('zwei:Dann', 'one', 800, 450, 1, .6),
+      { at: 'zwei:wandert', anim: '#moving', kf: { opacity: [0, 1] }, dur: .01, ease: 'linear' },
+      { at: 'zwei:wandert', anim: '#moving', kf: { translate: ['0 0', `${dx}px ${dy}px`] }, dur: .6, ease: 'move' },
+      cam('drei:Kamera', 'two', 800, 450, 1, .8),
+      { at: 'drei:Ergebnis', anim: '#total', kf: { opacity: [0, 1] }, dur: .3 },
+    ],
+  });
+}, { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>

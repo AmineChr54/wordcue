@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>The lens, as an engineering plate</title>
+<style>
+  @font-face { font-family:'Old Standard TT'; src:url(../../docs/fonts/old-standard-400.woff2) format('woff2'); }
+  @font-face { font-family:'Old Standard TT'; font-style:italic; src:url(../../docs/fonts/old-standard-400i.woff2) format('woff2'); }
+  :root { --ink:#1B2A6B; --paper:#DFE6EE; }
+  #fit { width:1600px; height:900px; }
+  #stage { position:relative; width:1600px; height:900px; overflow:hidden; background:var(--paper); color:var(--ink); font:400 46px/1.2 'Old Standard TT',serif; }
+  #world { position:absolute; left:0; top:0; width:3200px; height:900px; }
+  #plate { position:absolute; left:0; top:0; }
+  #plate path, #plate line, #plate circle { fill:none; stroke:var(--ink); }
+  .ray { stroke-width:2.4; stroke-dasharray:1; stroke-dashoffset:1; }
+  .ray.faint { stroke-width:1.6; opacity:.6; }
+  .lens { stroke-width:3.4; stroke-dasharray:1; stroke-dashoffset:1; }
+  .text { position:absolute; opacity:0; }
+  .fig { font-style:italic; font-size:38px; }
+  .big { font-size:150px; line-height:1; text-align:center; }
+  #year { font-size:110px; line-height:1; text-align:right; }
+  #tag { position:absolute; right:52px; top:46px; font:italic 400 30px 'Old Standard TT',serif; z-index:3; }
+  #frame { position:absolute; left:30px; top:30px; width:1540px; height:840px; border:1.5px solid var(--ink); }
+  #frame2 { position:absolute; left:1630px; top:30px; width:1540px; height:840px; border:1.5px solid var(--ink); }
+</style>
+</head>
+<body>
+<div id="fit"><div id="stage"><div id="world">
+  <div id="frame"></div><div id="frame2"></div>
+  <svg id="plate" width="3200" height="900"></svg>
+  <div class="text fig" id="f1" style="left:70px;top:60px">Fig. 1. A flame, unaided</div>
+  <div class="text fig" id="f2" style="left:70px;top:60px">Fig. 2. The principle, simplified</div>
+  <div class="text" id="year" style="left:900px;top:300px;width:640px">Cordouan<br>1823</div>
+  <div class="text" id="c1" style="left:70px;top:790px;width:760px">most of its light is wasted</div>
+  <div class="text" id="c2" style="left:70px;top:790px;width:720px">A. Fresnel: thin rings of glass</div>
+  <div class="text" id="c3" style="left:900px;top:790px;width:640px">each ring: a flat beam</div>
+  <div class="text fig" id="f3" style="left:1670px;top:60px">Fig. 3. Range</div>
+  <div class="text big" id="km" style="left:1630px;top:220px;width:1540px">more than 32 km</div>
+  <div class="text" id="src" style="left:1670px;top:790px;font-size:34px">Simplified, not to scale. Source: Wikipedia, “Fresnel lens”.</div>
+</div><div id="tag">AI voice · Made with Wordcue</div></div></div>
+<script src="build/timing.js"></script>
+<script src="../../engine/film.js"></script>
+<script src="../../engine/player.js"></script>
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+const plate = document.getElementById('plate');
+const add = (d, cls, id) => {
+  const p = plate.appendChild(document.createElementNS(NS, 'path'));
+  p.setAttribute('d', d); p.setAttribute('pathLength', 1); p.setAttribute('class', cls); if (id) p.id = id;
+  return p;
+};
+const FX = 420, FY = 440; // the flame
+
+/* Flame */
+add(`M${FX} ${FY + 34} C${FX - 26} ${FY + 8} ${FX - 6} ${FY - 22} ${FX} ${FY - 46} C${FX + 6} ${FY - 22} ${FX + 26} ${FY + 8} ${FX} ${FY + 34}`, 'lens', 'flame');
+
+/* Rays in every direction, drawn out from the flame. */
+for (let i = 0; i < 28; i++) {
+  const a = i / 28 * Math.PI * 2;
+  add(`M${FX + Math.cos(a) * 54} ${FY + Math.sin(a) * 54} L${FX + Math.cos(a) * 330} ${FY + Math.sin(a) * 330}`, 'ray free');
+}
+
+/* A section through the lens: stepped rings to the right of the flame. */
+const LX = 760, RINGS = [-300, -225, -150, -75, 0, 75, 150, 225, 300];
+RINGS.forEach((dy, i) => {
+  const y = FY + dy, thick = 14 + (4 - Math.abs(i - 4)) * 3;
+  /* A stepped section: a flat back, and a face slanted toward the axis. */
+  const outer = dy < 0 ? y - 34 : y + 34, inner = dy < 0 ? y + 34 : y - 34;
+  const slant = Math.abs(dy) / 300 * 26;
+  add(`M${LX + 44} ${y - 34} L${LX + 44} ${y + 34} L${LX + 6 + (dy === 0 ? 0 : (outer > inner ? slant : 0))} ${y + 34} L${LX + 6 + (dy === 0 ? 0 : (outer > inner ? 0 : slant))} ${y - 34} Z`, 'lens ring');
+});
+
+/* Each ring takes a ray from the flame and sends it out flat. */
+RINGS.forEach(dy => add(`M${FX + 50} ${FY + dy * .13} L${LX} ${FY + dy}`, 'ray faint in'));
+RINGS.forEach(dy => add(`M${LX + 34} ${FY + dy} L1570 ${FY + dy}`, 'ray flat'));
+
+/* Sea horizon and the range bar across the second plate. */
+add('M1670 620 L3130 620', 'lens', 'sea');
+add('M1700 440 L3100 440', 'ray', 'range');
+add('M1700 420 L1700 460', 'ray', 'tick1');
+add('M3100 420 L3100 460', 'ray', 'tick2');
+
+const show = (at, el, dur = .9) => ({ at, anim: el, kf: { opacity: [0, 1] }, dur, ease: 'linear' });
+const hide = (at, el, dur = .6) => ({ at, anim: el, kf: { opacity: [1, 0] }, dur, ease: 'linear' });
+const draw = (at, el, dur = 1.4, stagger = 0) => ({ at, anim: el, kf: { strokeDashoffset: [1, 0] }, dur, ease: 'move', stagger });
+
+const STEPS = [
+  show('l1', '#f1'),
+  draw('l1', '#flame', 1),
+  draw('l1:every', '.free', 1.5, .04),
+  show('l1:wasted-0.5', '#c1'),
+
+  hide('l2-0.38', '#f1', .3), hide('l2-0.38', '#c1', .3),
+  show('l2', '#f2', .5),
+  { at: 'l2', anim: '.free', kf: { opacity: [1, .16] }, dur: 1, ease: 'linear' },
+  show('l2:Cordouan', '#year', .7),
+  show('l2:Augustin', '#c2'),
+  hide('l3', '#year'),
+  draw('l2:thin', '.ring', 1.1, .09),
+
+  draw('l3', '.in', .9, .05),
+  draw('l3:bends', '.flat', 1.2, .05),
+  show('l3:bends', '#c3', .35),
+
+  /* The camera travels along the beam to the next plate, as if turning a page. */
+  { at: 'l4-0.2', camera: true, x: 2400, y: 450, zoom: 1, dur: 1.5, ease: 'move' },
+  show('l4', '#f3'),
+  draw('l4', '#sea', 1.3),
+  draw('l4:from', '#range', 1.5),
+  draw('l4:from', '#tick1', .3),
+  draw('l4:away-0.3', '#tick2', .3),
+  show('l4:more', '#km', .7),
+  show('l4.end', '#src'),
+];
+
+FilmPlayer.start(() => Film.create({ stage: '#stage', world: '#world', timing: TIMING, steps: STEPS }),
+  { fit: '#fit', audio: 'build/narration.wav', timing: TIMING });
+</script>
+</body>
+</html>
